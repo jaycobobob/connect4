@@ -1,17 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import { createRoot } from "react-dom/client";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import "bootstrap/dist/css/bootstrap.css";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+import Board from "./components/Board";
+
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+const createGrid = (width, height) => {
+    let out = [];
+    for (let i = 0; i < height; i++) {
+        let temp = [];
+        for (let j = 0; j < width; j++) {
+            temp.push({ x: j, y: i, val: 0 });
+        }
+        out.push(temp);
+    }
+    return out;
+};
+let board = createGrid(7, 6);
+
+root.render(<Board board={board} width={7} height={6} size={64} />);
