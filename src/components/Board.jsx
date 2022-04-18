@@ -3,6 +3,7 @@ import * as d3 from "https://cdn.skypack.dev/d3@7";
 import api from "../api";
 
 class Board extends Component {
+    state = { isGameOver: false };
     constructor(props) {
         super(props);
         this.board = this.props.board;
@@ -52,6 +53,8 @@ class Board extends Component {
             .attr("cx", (d) => this.xScale(d.x) + this.props.size / 2)
             .attr("cy", (d) => this.yScale(d.y) + this.props.size / 2)
             .attr("r", (d) => (d.val ? this.props.size / 3 : 0))
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
             .attr("fill", (d) => this.getPieceColor(d.val));
     };
 
@@ -66,16 +69,23 @@ class Board extends Component {
             .attr("r", (d) => this.props.size / 3);
     };
 
-    clickHandler = (e, data) => {
-        let res = api.updateBoard(this.board, data.x, 1);
+    clickHandler = async (e, data) => {
+        if (this.state.isGameOver) {
+            return;
+        }
+
+        let res = await api.drop(this.board, data.x);
         if (res.success) {
-            this.setPiece(res.move.x, res.move.y, 1);
+            this.setPiece(res.location.x, res.location.y, 1);
 
             // check for game over
-            res = api.isGameOver(this.board);
+            res = await api.isGameOver(this.board);
             if (res.success) {
-                console.log("Game Over");
+                console.log(`Player ${res.winner} wins!`);
+                this.setState({ isGameOver: true });
             } else {
+                // sleep for 1 second
+                await new Promise((r) => setTimeout(r, 2000));
                 this.cpuMove();
             }
         } else {
@@ -83,15 +93,16 @@ class Board extends Component {
         }
     };
 
-    cpuMove = () => {
-        let res = api.getCPUMove(this.board, 2);
+    cpuMove = async () => {
+        let res = await api.getCPUMove(this.board, "medium");
         if (res.success) {
-            this.setPiece(res.move.x, res.move.y, 2);
+            this.setPiece(res.location.x, res.location.y, 2);
 
             // check for game over
-            res = api.isGameOver(this.board);
+            res = await api.isGameOver(this.board);
             if (res.success) {
-                console.log("Game Over");
+                console.log(`Player ${res.winner} wins!`);
+                this.setState({ isGameOver: true });
             }
         } else {
             console.log(res.msg);
