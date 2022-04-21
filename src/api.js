@@ -22,6 +22,10 @@ const api = {
             res.json()
         );
     },
+
+    getNewBoard: (width, height) => {
+        return fetch(address + `/board/new/${width}/${height}`).then((res) => res.json());
+    },
 };
 
 export default api;

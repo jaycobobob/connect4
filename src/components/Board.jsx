@@ -3,10 +3,9 @@ import * as d3 from "https://cdn.skypack.dev/d3@7";
 import api from "../api";
 
 class Board extends Component {
-    state = { isGameOver: false };
+    state = { isGameOver: false, isMyTurn: true };
     constructor(props) {
         super(props);
-        this.board = this.props.board;
     }
 
     render = () => {
@@ -21,8 +20,10 @@ class Board extends Component {
         );
     };
 
-    // Runs once the component is rendered initially
-    componentDidMount = () => {
+    // Runs once the svg is rendered initially
+    componentDidMount = async () => {
+        let res = await api.getNewBoard(this.props.width, this.props.height);
+        this.board = res.board;
         let cells = d3
             .select("#boardSVG")
             .selectAll("g")
@@ -52,10 +53,8 @@ class Board extends Component {
             .attr("class", "piece")
             .attr("cx", (d) => this.xScale(d.x) + this.props.size / 2)
             .attr("cy", (d) => this.yScale(d.y) + this.props.size / 2)
-            .attr("r", (d) => (d.val ? this.props.size / 3 : 0))
-            .attr("stroke", "black")
-            .attr("stroke-width", 1)
-            .attr("fill", (d) => this.getPieceColor(d.val));
+            .attr("r", (d) => (d.val ? this.props.size / 3 : 0));
+        //.attr("fill", (d) => this.getPieceColor(d.val));
     };
 
     setPiece = (x, y, val, callback) => {
@@ -63,16 +62,17 @@ class Board extends Component {
 
         return d3
             .select(`#boardSVG > g:nth-child(${y * this.props.width + x + 1}) > circle`)
-            .attr("fill", (d) => this.getPieceColor(d.val))
+            .attr("team", (d) => d.val)
             .transition()
             .duration(1000)
             .attr("r", (d) => this.props.size / 3);
     };
 
     clickHandler = async (e, data) => {
-        if (this.state.isGameOver) {
+        if (this.state.isGameOver || !this.state.isMyTurn) {
             return;
         }
+        this.setState({ isMyTurn: false });
 
         let res = await api.drop(this.board, data.x);
         if (res.success) {
@@ -83,7 +83,9 @@ class Board extends Component {
             if (res.success) {
                 console.log(`Player ${res.winner} wins!`);
                 this.setState({ isGameOver: true });
+                this.props.setWinner(res.winner);
             } else {
+                this.props.setTurn(2);
                 // sleep for 1 second
                 await new Promise((r) => setTimeout(r, 2000));
                 this.cpuMove();
@@ -91,6 +93,8 @@ class Board extends Component {
         } else {
             console.log(res.msg);
         }
+
+        this.setState({ isMyTurn: true });
     };
 
     cpuMove = async () => {
@@ -103,7 +107,10 @@ class Board extends Component {
             if (res.success) {
                 console.log(`Player ${res.winner} wins!`);
                 this.setState({ isGameOver: true });
+                this.props.setWinner(res.winner);
             }
+
+            this.props.setTurn(1);
         } else {
             console.log(res.msg);
         }
