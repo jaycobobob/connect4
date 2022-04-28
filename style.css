@@ -1,0 +1,15 @@
+rect {
+    fill: #0d6efd;
+}
+
+circle[team="1"] {
+    fill: #dc3545;
+}
+
+circle[team="2"] {
+    fill: #ffc107;
+}
+
+.rules {
+    max-width: 200px;
+}

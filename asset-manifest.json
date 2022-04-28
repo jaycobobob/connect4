@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/connect4/static/js/main.cc438117.js",
+    "index.html": "/connect4/index.html",
+    "main.cc438117.js.map": "/connect4/static/js/main.cc438117.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.cc438117.js"
+  ]
+}
