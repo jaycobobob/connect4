@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import * as d3 from "https://cdn.skypack.dev/d3@7";
 import api from "../api";
+import * as d3 from "d3";
 
 class Board extends Component {
     state = { isGameOver: false, isMyTurn: true };

@@ -25,13 +25,10 @@ const Homepage = () => {
 
     return (
         <div className="">
-            <div className="d-flex p-2 bg-primary justify-content-between">
+            <div className="container-fluid p-2 bg-primary justify-content-between">
                 <h1 className="h1 text-light">Play Connect 4 Online</h1>
-                <a className="h2 text-light" href="/scores">
-                    High Scores
-                </a>
             </div>
-            <div className="d-flex p-5 justify-content-between">
+            <div className="d-flex flex-wrap p-5 justify-content-between">
                 <div className="rules">
                     <h1 className="text-center">
                         <small>How to Play:</small>
@@ -45,8 +42,14 @@ const Homepage = () => {
                         <li>Get 4 pieces in a row before your opponent does.</li>
                     </ul>
                 </div>
-                <div>
-                    <Board width="7" height="6" size="64" setWinner={setWinner} setTurn={setTurn} />
+                <div className="pb-3">
+                    <Board
+                        width="7"
+                        height="6"
+                        size={window.innerWidth > 600 ? 64 : 48}
+                        setWinner={setWinner}
+                        setTurn={setTurn}
+                    />
                     <div className="d-flex justify-content-center">
                         <h1>
                             <small>{message}</small>

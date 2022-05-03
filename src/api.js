@@ -1,7 +1,6 @@
+const mode = 0;
 const address =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://jaycobobob-connect4-backend.herokuapp.com/";
+    mode === 1 ? "http://localhost:3000" : "https://jaycobobob-connect4-backend.herokuapp.com";
 console.log(`Querying API at ${address}`);
 
 const api = {
